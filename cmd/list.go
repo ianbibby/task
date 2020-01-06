@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -26,7 +27,21 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all the tasks to be completed",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		tasks, err := App.AllTasks()
+		if err != nil {
+			fmt.Println("Something went wrong", err)
+			os.Exit(1)
+		}
+
+		if len(tasks) == 0 {
+			fmt.Println("You have no tasks to completed.  Why not take a vacation? 🏖")
+			return
+		}
+
+		fmt.Println("You have the following tasks:")
+		for i, t := range tasks {
+			fmt.Printf("%d. %s\n", i+1, t.Val)
+		}
 	},
 }
 

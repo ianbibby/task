@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/ianbibby/task/db"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -26,6 +27,7 @@ import (
 )
 
 var cfgFile string
+var App *db.App
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

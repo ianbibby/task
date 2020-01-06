@@ -17,6 +17,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
@@ -26,7 +28,38 @@ var doCmd = &cobra.Command{
 	Use:   "do",
 	Short: "Marks a task as completed",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("do called")
+		var ids []int
+
+		for _, arg := range args {
+			n, err := strconv.Atoi(arg)
+			if err != nil {
+				fmt.Println("Invalid task id:", arg)
+				os.Exit(1)
+			}
+			ids = append(ids, n)
+		}
+
+		tasks, err := App.AllTasks()
+		if err != nil {
+			fmt.Println("Something went wrong:", err)
+			os.Exit(1)
+		}
+
+		for _, id := range ids {
+			if id <= 0 || id > len(tasks) {
+				fmt.Printf("Invalid task id: %d\n", id)
+				continue
+			}
+
+			task := tasks[id-1]
+			err := App.DeleteTask(task.Key)
+			if err != nil {
+				fmt.Printf("Failed to mark %q as completed.  Error: %v", task.Val, err)
+				continue
+			}
+
+			fmt.Printf("Marked %q as completed.\n", task.Val)
+		}
 	},
 }
 

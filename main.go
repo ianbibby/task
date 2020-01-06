@@ -15,8 +15,30 @@ limitations under the License.
 */
 package main
 
-import "github.com/ianbibby/task/cmd"
+import (
+	"log"
+	"path/filepath"
+
+	"github.com/ianbibby/task/cmd"
+	"github.com/ianbibby/task/db"
+	"github.com/mitchellh/go-homedir"
+)
 
 func main() {
+	home, err := homedir.Dir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	a := &db.App{}
+
+	p := filepath.Join(home, "tasks.db")
+	err = a.Init(p)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer a.Close()
+
+	cmd.App = a
 	cmd.Execute()
 }
